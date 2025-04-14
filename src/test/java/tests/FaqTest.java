@@ -15,13 +15,13 @@ import java.util.Collection;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class FaqTest extends BaseTest { // Наследование от BaseTest
+public class FaqTest extends BaseTest {
 
     private int questionIndex; // Индекс вопроса
     private String expectedAnswer; // Ожидаемый ответ
 
     public FaqTest(int questionNumber, String expectedAnswer) {
-        this.questionIndex = questionNumber;
+        this.questionIndex = questionNumber; // Индекс вопросов начинается с 1
         this.expectedAnswer = expectedAnswer;
     }
 
@@ -41,70 +41,15 @@ public class FaqTest extends BaseTest { // Наследование от BaseTes
 
     @Test
     public void validateFaqResponses() {
-        WebElement faqSection = mainPage.getQuestionElement(0);
+        WebElement faqSection = mainPage.getQuestionElement(questionIndex - 1); // Индексируем с нуля
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", faqSection);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         wait.until(ExpectedConditions.visibilityOf(faqSection));
 
-        switch (questionIndex) {
-            case 1:
-                mainPage.clickQuestion1();
-                break;
-            case 2:
-                mainPage.clickQuestion2();
-                break;
-            case 3:
-                mainPage.clickQuestion3();
-                break;
-            case 4:
-                mainPage.clickQuestion4();
-                break;
-            case 5:
-                mainPage.clickQuestion5();
-                break;
-            case 6:
-                mainPage.clickQuestion6();
-                break;
-            case 7:
-                mainPage.clickQuestion7();
-                break;
-            case 8:
-                mainPage.clickQuestion8();
-                break;
-            default:
-                throw new IllegalArgumentException("Неверный номер вопроса: " + questionIndex);
-        }
+        mainPage.clickQuestion(questionIndex - 1); // Метод для клика по вопросу (индексируем с нуля)
 
-        String actualAnswer;
-        switch (questionIndex) {
-            case 1:
-                actualAnswer = mainPage.getAnswer1Text();
-                break;
-            case 2:
-                actualAnswer = mainPage.getAnswer2Text();
-                break;
-            case 3:
-                actualAnswer = mainPage.getAnswer3Text();
-                break;
-            case 4:
-                actualAnswer = mainPage.getAnswer4Text();
-                break;
-            case 5:
-                actualAnswer = mainPage.getAnswer5Text();
-                break;
-            case 6:
-                actualAnswer = mainPage.getAnswer6Text();
-                break;
-            case 7:
-                actualAnswer = mainPage.getAnswer7Text();
-                break;
-            case 8:
-                actualAnswer = mainPage.getAnswer8Text();
-                break;
-            default:
-                throw new IllegalArgumentException("Неверный номер вопроса: " + questionIndex);
-        }
+        String actualAnswer = mainPage.getAnswerText(questionIndex - 1); // Метод для получения текста ответа (индексируем с нуля)
 
         assertEquals("Текст ответа на вопрос " + questionIndex + " не совпадает", expectedAnswer, actualAnswer);
     }

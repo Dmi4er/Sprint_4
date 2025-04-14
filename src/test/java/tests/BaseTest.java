@@ -20,6 +20,6 @@ public class BaseTest {
 
     @After
     public void tearDown() {
-            driver.quit();
-        } // Закрытие браузера после теста
-    }
+        driver.quit();
+    } // Закрытие браузера после теста
+}

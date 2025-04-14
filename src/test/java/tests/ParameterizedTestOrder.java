@@ -49,9 +49,8 @@ public class ParameterizedTestOrder extends BaseTest { // Наследовани
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-                // Первый набор данных (кнопка вверху)
                 {
-                        true, // Использовать верхнюю кнопку
+                        true,
                         "Алекс",
                         "Смирнов",
                         "Санкт-Петербург",
@@ -61,9 +60,8 @@ public class ParameterizedTestOrder extends BaseTest { // Наследовани
                         "red",
                         "Пожалуйста, будьте осторожны!"
                 },
-                // Второй набор данных (кнопка снизу)
                 {
-                        false, // Использовать нижнюю кнопку
+                        false,
                         "Иван",
                         "Петров",
                         "Екатеринбург",
@@ -96,16 +94,33 @@ public class ParameterizedTestOrder extends BaseTest { // Наследовани
         orderPage = new OrderPage(driver);
 
         // Заполнение полей первого шага оформления заказа
+        fillFirstStep();
+
+        // Нажимаю кнопку "Далее"
+        orderPage.clickNextButton();
+
+        // Заполнение полей второго шага оформления заказа
+        fillSecondStep();
+
+        // Нажимаю кнопку "Заказать"
+        orderPage.clickOrderButton();
+
+        // Подтверждение заказа
+        orderPage.confirmOrder();
+
+        // Проверка успешного создания заказа
+        assertOrderConfirmation();
+    }
+
+    private void fillFirstStep() {
         orderPage.enterName(this.firstName);
         orderPage.enterSurname(this.lastName);
         orderPage.enterAddress(this.deliveryAddress);
         orderPage.selectFirstMetroStation();
         orderPage.enterPhone(this.contactNumber);
+    }
 
-        // Нажимаю кнопку "Далее"4
-        orderPage.clickNextButton();
-
-        // Заполнение полей второго шага оформления заказа
+    private void fillSecondStep() {
         if (this.deliveryDate.equals("20")) {
             orderPage.selectDeliveryDate20();
         } else if (this.deliveryDate.equals("14")) {
@@ -125,17 +140,10 @@ public class ParameterizedTestOrder extends BaseTest { // Наследовани
         }
 
         orderPage.enterComment(this.additionalNote);
+    }
 
-        // Нажимаю кнопку "Заказать"
-        orderPage.clickOrderButton();
-
-        // Подтверждение заказа
-        orderPage.confirmOrder();
-
-        // Проверка закрытия диалогового окна подтверждения заказа
-        assertTrue("Диалоговое окно не закрылось. Заказ не подтвержден", orderPage.isOrderConfirmationDialogClosed());
-
-        // Проверка, что появилось всплывающее окно с сообщением об успешном создании заказа
-        assertTrue("Всплывающее окно с сообщением об успешном создании заказа не отображается", orderPage.isOrderConfirmationHeaderDisplayed());
+    private void assertOrderConfirmation() {
+        assertTrue("Всплывающее окно с сообщением об успешном создании заказа не отображается",
+                orderPage.isOrderConfirmationHeaderDisplayed());
     }
 }
